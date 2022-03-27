@@ -1,8 +1,8 @@
-use std::path::{PathBuf, Path};
-use std::fs;
+use std::path::{Path, PathBuf};
+use std::{env, fs};
 
+use anyhow::{anyhow, Context, Result};
 use clap::Parser;
-use anyhow::{anyhow, Result, Context};
 use serde::Deserialize;
 
 use crate::platform::Platform;
@@ -110,9 +110,44 @@ impl Config {
         if let Some(lang) = &args.language {
             self.languages = vec![lang.to_string()];
         } else {
-            // TODO: get lang from env
+            self.languages = get_env_languages();
         }
     }
+}
+
+fn get_env_languages() -> Vec<String> {
+    let mut results: Vec<String> = Vec::new();
+    let ignore = |lang: &String| {
+        let lang = lang.to_uppercase();
+        // vaild langnuage code at least with two char which also cover the 'C' scenario
+        lang.len() >= 2 && lang != "POSIX"
+    };
+
+    let lang = env::var("LANG").ok().filter(ignore);
+    match lang {
+        None => return results,
+        Some(lang) => {
+            // an expension would gain a more accurate result
+            let mut expension_push = |lang: &str| {
+                results.push(lang.to_string());
+                if lang.len() > 2 {
+                    results.push(lang[0..2].to_string());
+                }
+            };
+
+            if let Some(language) = env::var("LANGUAGE").ok().filter(ignore) {
+                // LANGUAGE=l1:l2:...
+                language.split(":").into_iter().for_each(|l| {
+                    expension_push(l);
+                });
+            }
+            // LANG=ll[_CC][.encoding]
+            if let Some(l) = lang.split(".").into_iter().next() {
+                expension_push(l);
+            }
+            return results;
+        }
+    };
 }
 
 pub(crate) fn get_default_pages_dir() -> Result<PathBuf> {
@@ -138,4 +173,88 @@ struct RawConfig {
     pub private_pages_dir: Option<PathBuf>,
     pub platform: Option<String>,
     pub sytled: Option<StyledChoice>,
+}
+
+
+
+#[cfg(test)]
+mod test {
+
+    mod language {
+        use std::env;
+        use std::sync::Mutex;
+
+        use lazy_static::lazy_static;
+
+        use crate::config::get_env_languages;
+
+        const LANG: &str = "LANG";
+        const LANGUAGE: &str = "LANGUAGE";
+
+        lazy_static! {
+            static ref MUTEX: Mutex<()> = Mutex::default();
+        }
+
+        fn clean_langs_env_run<F: FnOnce()>(f: F) {
+            let _lock = MUTEX.lock();
+            env::remove_var(LANG);
+            env::remove_var(LANGUAGE);
+            f();
+        }
+
+        #[test]
+        fn missing_lang() {
+            clean_langs_env_run(|| {
+                env::set_var(LANGUAGE, "zh_TW:bo:en");
+                assert_eq!(get_env_languages(), vec![String::new(); 0]);
+            });
+        }
+
+        #[test]
+        fn missing_language() {
+            clean_langs_env_run(|| {
+                env::set_var(LANG, "zh");
+                assert_eq!(get_env_languages(), vec!["zh"]);
+            });
+        }
+
+        #[test]
+        fn lang_with_encoding() {
+            clean_langs_env_run(|| {
+                env::set_var(LANG, "zh.UTF-8");
+                assert_eq!(get_env_languages(), vec!["zh"]);
+            });
+        }
+
+        #[test]
+        fn language_priority() {
+            clean_langs_env_run(|| {
+                env::set_var(LANG, "zh");
+                env::set_var(LANGUAGE, "bo:en");
+                assert_eq!(get_env_languages(), vec!["bo", "en", "zh"]);
+            });
+        }
+
+        #[test]
+        fn lang_and_language_expansion() {
+            clean_langs_env_run(|| {
+                env::set_var(LANG, "en_US");
+                env::set_var(LANGUAGE, "zh_TW:bo");
+                assert_eq!(
+                    get_env_languages(),
+                    vec!["zh_TW", "zh", "bo", "en_US", "en"]
+                )
+            });
+        }
+
+        #[test]
+        fn ignore_c_and_posix() {
+            clean_langs_env_run(|| {
+                env::set_var(LANG, "C");
+                assert_eq!(get_env_languages(), vec![String::new(); 0]);
+                env::set_var(LANG, "POSIX");
+                assert_eq!(get_env_languages(), vec![String::new(); 0]);
+            });
+        }
+    }
 }
