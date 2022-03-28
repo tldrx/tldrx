@@ -64,15 +64,9 @@ impl<'a> Page<'a> {
 
     pub fn render(&self) -> Result<()> {
         match self.config.styled {
-            StyledChoice::Auto => {
-                if stdin().is_tty() {
-                    self.render_styled()
-                } else {
-                    self.render_styled()
-                }
-            }
+            StyledChoice::Auto if stdin().is_tty() => self.render_styled(),
             StyledChoice::On => self.render_styled(),
-            StyledChoice::Off => self.render_styless(),
+            _ => self.render_styless(),
         }
     }
 
