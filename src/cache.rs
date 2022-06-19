@@ -1,16 +1,23 @@
+use std::fs::{self, File};
+use std::io::{BufReader, BufWriter};
 use std::path::PathBuf;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 
 use crate::config::{self, Config};
 use crate::page::{Kind, Page};
 use crate::platform::Platform;
 
+
+const OFFICIAL_PAGES_ARCHIVE_URL: &str = "https://tldr.sh/assets/tldr.zip";
+const PAGES_DIR: &str = "tldr-pages";
+
+
 pub(crate) fn seek<'a>(command: &'a str, config: &'a Config) -> Result<Vec<Page<'a>>> {
     let pages_dir = match config.official_pages_dir {
         Some(ref d) => d.to_owned(),
         None => config::get_default_pages_dir()?,
-    };
+    }.join(PAGES_DIR);
 
     let mut lang_folders = Vec::with_capacity(config.languages.len() + 1);
     for lang in &config.languages {
@@ -78,4 +85,53 @@ where
         }
     }
     None
+}
+
+pub(crate) fn update(config: &Config) -> Result<()> {
+    let dir = config.get_official_page_dir()?;
+    fs::create_dir_all(&dir)
+        .with_context(|| format!("Fail to create directory: {}", &dir.display()))?;
+
+    let filename = download_archive(config)?;
+    let file = File::open(&filename)
+        .with_context(|| format!("Could not open file: {}", &filename.display()))?;
+    let mut archive = zip::ZipArchive::new(BufReader::new(file))
+        .with_context(|| format!("Error preparing to unzip: {}", &filename.display()))?;
+
+    let tmp_dir = dir.join("tmp-pages");
+    let pages_dir = dir.join(PAGES_DIR);
+
+    archive
+        .extract(&tmp_dir)
+        .with_context(|| format!("Fail to extract archive to: {}", &tmp_dir.display()))?;
+    if pages_dir.is_dir() {
+        fs::remove_dir_all(&pages_dir)
+            .with_context(|| format!("Fail to clean up: {}", &pages_dir.display()))?;
+    }
+    fs::rename(&tmp_dir, &pages_dir).with_context(|| {
+        format!(
+            "Error swapping dir: {} -> {}",
+            &tmp_dir.display(),
+            &pages_dir.display()
+        )
+    })?;
+    fs::remove_file(&filename)
+        .with_context(|| format!("Fail to clean up archive: {}", &filename.display()))?;
+    Ok(())
+}
+
+fn download_archive(config: &Config) -> Result<PathBuf> {
+    let url = OFFICIAL_PAGES_ARCHIVE_URL;
+    let mut resp = reqwest::blocking::get(url)?
+        .error_for_status()
+        .with_context(|| format!("Fail to download archive form: {}", url))?;
+    let dir = config.get_official_page_dir()?;
+
+    let archive = dir.join("tldr.zip");
+
+    let mut file = File::create(&archive)
+        .with_context(|| format!("Fail to create archive: {}", archive.display()))?;
+    let mut buf = BufWriter::new(&mut file);
+    resp.copy_to(&mut buf).with_context(|| format!("Fail to copy archive stream"))?;
+    Ok(archive)
 }

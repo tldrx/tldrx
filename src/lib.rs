@@ -31,8 +31,7 @@ pub fn main() {
 
 fn run(args: &config::Args, config: &config::Config) -> Result<()> {
     if args.update {
-        // TODO: support update cache
-        return Err(anyhow!("Coming soon and Stay Tuned!"));
+        return cache::update(config);
     }
     if args.list {
         // TODO: support lists pages
@@ -40,7 +39,7 @@ fn run(args: &config::Args, config: &config::Config) -> Result<()> {
     }
 
     let command = &args.command.join("-");
-    let pages = cache::seek(&command, &config)?;
+    let pages = cache::seek(&command, config)?;
     if pages.is_empty() {
         let msg = format!(
             "404: {}\n\n\

@@ -113,6 +113,13 @@ impl Config {
             self.languages = get_env_languages();
         }
     }
+
+    pub fn get_official_page_dir(&self) -> Result<PathBuf> {
+        match self.official_pages_dir {
+            Some(ref d) => Ok(d.to_owned()),
+            None => Ok(get_default_pages_dir()?),
+        }
+    }
 }
 
 fn get_env_languages() -> Vec<String> {
