@@ -39,15 +39,21 @@ fn run(args: &config::Args, config: &config::Config) -> Result<()> {
     }
 
     let command = &args.command.join("-");
+
+    if args.edit {
+        return cache::edit(&command, args, config);
+    }
+
     let pages = cache::seek(&command, config)?;
     if pages.is_empty() {
         let msg = format!(
             "404: {}\n\n\
              Try:\n  \
                * tldr -u\n  \
+               * tldr -e {}\n\
                * https://github.com/tldr-pages/tldr/issues/new?title=page%20request:%20{}\
             ",
-            command, command
+            command, command, command
         );
         return Err(anyhow!(msg));
     }

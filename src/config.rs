@@ -39,6 +39,10 @@ pub(crate) struct Args {
     /// Print version.
     #[clap(short = 'v', long)]
     pub version: bool,
+
+    /// Edit command.
+    #[clap(short, long)]
+    pub edit: bool
 }
 
 
@@ -76,6 +80,7 @@ pub(crate) struct Config {
     pub platform: Option<Platform>,
     pub languages: Vec<String>,
     pub styled: StyledChoice,
+    pub editor: Option<String>,
 }
 
 impl Config {
@@ -169,6 +174,7 @@ impl From<RawConfig> for Config {
             platform: rc.platform.and_then(|p| p.parse().ok()),
             languages: Vec::new(),
             styled: rc.sytled.unwrap_or_default(),
+            editor: rc.editor,
         }
     }
 }
@@ -180,6 +186,7 @@ struct RawConfig {
     pub private_pages_dir: Option<PathBuf>,
     pub platform: Option<String>,
     pub sytled: Option<StyledChoice>,
+    pub editor: Option<String>,
 }
 
 

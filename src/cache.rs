@@ -1,8 +1,10 @@
+use std::env;
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter};
 use std::path::PathBuf;
+use std::process::{Command, Stdio};
 
-use anyhow::{Context, Result};
+use anyhow::{anyhow, Context, Result};
 
 use crate::config::{self, Config};
 use crate::page::{Kind, Page};
@@ -134,4 +136,35 @@ fn download_archive(config: &Config) -> Result<PathBuf> {
     let mut buf = BufWriter::new(&mut file);
     resp.copy_to(&mut buf).with_context(|| format!("Fail to copy archive stream"))?;
     Ok(archive)
+}
+
+pub(crate) fn edit<'a>(command: &'a str, args: &'a config::Args, config: &'a Config) -> Result<()> {
+    let dir = config.private_pages_dir.as_deref().ok_or(anyhow!("Private pages dir not configured"))?;
+    let platform = args.platform.as_ref().unwrap_or(&Platform::Common);
+    let filename = &format!("{}.md", command);
+    let file = dir.join("pages").join(platform.to_string()).join(filename);
+
+    let editor = match config.editor {
+        Some(ref e) => e.to_owned(),
+        None => ["VISUAL", "EDITOR"]
+            .iter()
+            .filter_map(env::var_os)
+            .filter(|v| !v.is_empty())
+            .find_map(|v| v.into_string().ok())
+            .unwrap_or("vi".to_string()),
+    };
+
+    let mut iter = editor.split_ascii_whitespace();
+    let cmd: String = iter.next().unwrap().into();
+    let cmd_args = iter.map(String::from).collect::<Vec<String>>();
+
+    let output = Command::new(cmd)
+        .args(cmd_args)
+        .arg(&file)
+        .stdin(Stdio::inherit())
+        .stdout(Stdio::inherit())
+        .stdout(Stdio::inherit())
+        .output();
+    println!("{:?}", output);
+    Ok(())
 }
