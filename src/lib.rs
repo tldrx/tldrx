@@ -46,14 +46,14 @@ fn run(args: &config::Args, config: &config::Config) -> Result<()> {
 
     let pages = cache::seek(&command, config)?;
     if pages.is_empty() {
+        let bin = env!("CARGO_PKG_NAME");
         let msg = format!(
             "404: {}\n\n\
              Try:\n  \
-               * tldr -u\n  \
-               * tldr -e {}\n\
+               * {} -u\n  \
+               * {} -e {}\n  \
                * https://github.com/tldr-pages/tldr/issues/new?title=page%20request:%20{}\
-            ",
-            command, command, command
+            ", command, bin, bin, command, command
         );
         return Err(anyhow!(msg));
     }
