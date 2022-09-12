@@ -23,3 +23,9 @@ Edit or create private page for `git commit`:
 For more:
 
     tldrx --help
+
+
+## License
+
+This project is dual-licensed under [MIT](LICENSE-MIT) license and [MulanPSL-2.0](LICENSE-MulanPSL) license.
+You can freely choose one or the other that suits you.
