@@ -13,16 +13,31 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
+
       - name: Setup rust toolchains
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           profile: minimal
+
+      - name: Setup rust cache
+        uses: actions/cache@v3
+          with:
+            path: |
+              ~/.cargo/bin/
+              ~/.cargo/registry/index/
+              ~/.cargo/registry/cache/
+              ~/.cargo/git/db/
+              target/
+            key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Build
-        run: cargo build
+        run: cargo build --verbose
+
       - name: Run tests
-        run: cargo test
+        run: cargo test --verbose
 
