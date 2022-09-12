@@ -1,6 +1,6 @@
 # TLDRx
 
-![GitHub CI](https://github.com/tldrx/tldrx/actions/workflows/ci.yml/badge.svg)
+[![GitHub CI](https://github.com/tldrx/tldrx/actions/workflows/ci.yml/badge.svg)](https://github.com/tldrx/tldrx/actions/workflows/ci.yml)
 
 
 <img src="docs/screenshot.png" alt="screenshot" width="582">
@@ -23,6 +23,13 @@ Edit or create private page for `git commit`:
 For more:
 
     tldrx --help
+
+
+## Installation
+
+Assume you have rust cargo installed:
+
+    cargo install tldrx
 
 
 ## License
