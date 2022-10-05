@@ -1,0 +1,20 @@
+name: Benchmark
+
+on:
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Build benchmark docker image
+        run: docker build . --file ./benches/Dockerfile --tag benchmark:${{ env.GITHUB_RUN_NUMBER }}
+
+      - name: Run benchmark
+        run: docker run --privileged --rm -it benchmark:${{ env.GITHUB_RUN_NUMBER }}
+
+
