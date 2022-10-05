@@ -3,9 +3,6 @@ name: Benchmark
 on:
   workflow_dispatch:
 
-env:
-  RUN_NUM: ${{ env.GITHUB_RUN_NUMBER }}
-
 jobs:
   benchmark:
     runs-on: ubuntu-latest
@@ -15,9 +12,8 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build benchmark docker image
-        run: docker build . --file ./benches/Dockerfile --tag benchmark:$RUN_NUM
+        run: docker build . --file ./benches/Dockerfile --tag benchmark:$GITHUB_RUN_NUMBER
 
       - name: Run benchmark
-        run: docker run --privileged --rm -it benchmark:$RUN_NUM
-
+        run: docker run --privileged --rm -it benchmark:$GITHUB_RUN_NUMBER
 
