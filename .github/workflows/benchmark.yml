@@ -15,5 +15,5 @@ jobs:
         run: docker build . --file ./benches/Dockerfile --tag benchmark:$GITHUB_RUN_NUMBER
 
       - name: Run benchmark
-        run: docker run --privileged --rm -it benchmark:$GITHUB_RUN_NUMBER
+        run: docker run --privileged --rm benchmark:$GITHUB_RUN_NUMBER
 
