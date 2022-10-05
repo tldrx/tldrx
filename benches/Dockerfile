@@ -80,4 +80,6 @@ CMD hyperfine --warmup 10 --runs 100 --prepare 'sync; echo 3 | tee /proc/sys/vm/
     "/clients/outfieldr c99" \
     "/clients/tldrx c99" \
     "/clients/tealdeer c99" \
-    "/clients/tldrc c99"
+    "/clients/tldrc c99" \
+    --export-markdown benchmark.md \
+    && echo && cat benchmark.md
