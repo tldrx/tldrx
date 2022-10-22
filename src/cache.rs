@@ -158,13 +158,12 @@ pub(crate) fn edit<'a>(command: &'a str, args: &'a config::Args, config: &'a Con
     let cmd: String = iter.next().unwrap().into();
     let cmd_args = iter.map(String::from).collect::<Vec<String>>();
 
-    let output = Command::new(cmd)
+    Command::new(cmd)
         .args(cmd_args)
         .arg(&file)
         .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         .stdout(Stdio::inherit())
-        .output();
-    println!("{:?}", output);
+        .output()?;
     Ok(())
 }
