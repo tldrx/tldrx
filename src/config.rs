@@ -24,7 +24,7 @@ pub(crate) struct Args {
     #[clap(short, long)]
     pub update: bool,
 
-    /// Lists all pages for current platform or all with `-p all`.
+    /// Lists all pages or with `-p` option to filter by platform.
     #[clap(short, long)]
     pub list: bool,
 

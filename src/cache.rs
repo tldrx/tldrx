@@ -1,10 +1,12 @@
 use std::env;
+use std::ffi::OsStr;
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Context, Ok, Result};
+use walkdir::{DirEntry, WalkDir};
 
 use crate::config::{self, Config};
 use crate::page::{Kind, Page};
@@ -165,5 +167,62 @@ pub(crate) fn edit<'a>(command: &'a str, args: &'a config::Args, config: &'a Con
         .stdout(Stdio::inherit())
         .stdout(Stdio::inherit())
         .output()?;
+    Ok(())
+}
+
+
+pub(crate) fn list(config: &Config) -> Result<()> {
+    let filter_platform: Box<dyn Fn(&DirEntry) -> bool> = match config.platform.as_ref() {
+        Some(platform) => {
+            Box::new(|entry: &DirEntry| -> bool {
+                if !entry.file_type().is_dir() {
+                    return true;
+                }
+                let filename = entry.file_name();
+                let platform = &platform.to_string();
+                filename == "common" || filename == OsStr::new(platform)
+            })
+        },
+        _ => Box::new(|_: &DirEntry| -> bool {
+            return true;
+        })
+    };
+
+    let filter_pages = |entry: DirEntry| -> Option<String> {
+        if entry.file_type().is_file() && entry.path().extension().unwrap_or_default() == "md" {
+            entry.path().file_stem().and_then(OsStr::to_str).map(str::to_string)
+        } else {
+            None
+        }
+    };
+
+    let pages_dir = match config.official_pages_dir {
+        Some(ref d) => d.to_owned(),
+        None => config::get_default_pages_dir()?,
+    }.join(PAGES_DIR);
+
+    let mut pages = WalkDir::new(pages_dir)
+        .min_depth(2)
+        .into_iter()
+        .filter_entry(&filter_platform)
+        .filter_map(|e| e.ok())
+        .filter_map(filter_pages)
+        .collect::<Vec<String>>();
+
+    if let Some(ref dir) = config.private_pages_dir {
+        let ps = WalkDir::new(dir)
+            .min_depth(2)
+            .into_iter()
+            .filter_entry(&filter_platform)
+            .filter_map(|e| e.ok())
+            .filter_map(filter_pages)
+            .collect::<Vec<String>>();
+        pages.extend(ps.into_iter())
+    }
+
+    pages.sort_unstable();
+    pages.dedup();
+    println!("{}", pages.join("\n"));
+
     Ok(())
 }

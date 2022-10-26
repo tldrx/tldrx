@@ -34,8 +34,7 @@ fn run(args: &config::Args, config: &config::Config) -> Result<()> {
         return cache::update(config);
     }
     if args.list {
-        // TODO: support lists pages
-        return Err(anyhow!("Coming soon and Stay Tuned!"));
+        return cache::list(config);
     }
 
     let command = &args.command.join("-");
