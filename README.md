@@ -75,8 +75,7 @@ You can freely choose one or the other that suits you.
 
 
 
-[^1]: 1. Use `tldrx` instead of `tldr`.
-      2. `-l` `--list` options for listing all the pages not supported yet.
+[^1]: Use `tldrx` instead of `tldr`.
 
 [^2]: The new syntax for tldr-pages is an experimental RFC.
 
