@@ -1,9 +1,9 @@
 <h1>TLDRx</h1>
 
 <p>
-  <a href="https://github.com/tldrx/tldrx/actions/workflows/ci.yml/badge.svg"><img alt="GitHub CI" src="https://github.com/tldrx/tldrx/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="https://img.shields.io/crates/l/tldrx"><img alt="License" src="https://img.shields.io/crates/l/tldrx"></a>
-  <a href="https://img.shields.io/crates/v/tldrx"><img alt="License" src="https://img.shields.io/crates/v/tldrx"></a>
+  <a href="https://github.com/tldrx/tldrx/actions/workflows/ci.yml"><img alt="GitHub CI" src="https://github.com/tldrx/tldrx/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/tldrx/tldrx/blob/main/README.zh.md#%E8%AE%B8%E5%8F%AF%E8%AF%81"><img alt="License" src="https://img.shields.io/crates/l/tldrx"></a>
+  <a href="https://crates.io/crates/tldrx"><img alt="License" src="https://img.shields.io/crates/v/tldrx"></a>
 </p>
 
 <p><a href="README.md">English</a> | 简体中文</p>
