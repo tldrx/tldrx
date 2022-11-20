@@ -47,6 +47,7 @@ pub(crate) struct Args {
 
 
 #[derive(Debug, Deserialize, PartialEq, Clone, Copy)]
+#[serde(rename_all = "lowercase")]
 pub(crate) enum StyledChoice {
     Auto,
     On,
