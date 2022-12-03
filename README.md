@@ -86,13 +86,13 @@ Create one if not there.
 
 ```toml
 
-# (-) Path to cache official tldr-pages
+# [-] Path to cache official tldr-pages
 official_pages_dir = "/path/to/official/tldr-pages"
 
 # <+> Path to private tldr-pages
 private_pages_dir = "/path/to/private/tldr-pages"
 
-# (-) Show pages for the given platform. Option: [osx | linux | ...]
+# [-] Show pages for the given platform. Option: [osx | linux | ...]
 platform = "linux"
 
 # [-] Colorlize the output pages Choice: [auto | on | off]

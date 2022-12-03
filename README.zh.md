@@ -98,13 +98,13 @@ P.S. 一些研究表示人体大脑对于 `100ms` 时间窗内的响应，感知
 
 ```toml
 
-# (-) 官方简读页存放目录
+# [-] 官方简读页存放目录
 official_pages_dir = "/path/to/official/tldr-pages"
 
 # <+> 私有简读页存放目录
 private_pages_dir = "/path/to/private/tldr-pages"
 
-# (-) 显示指定平台简读页，选项：[osx | linux | ...]
+# [-] 显示指定平台简读页，选项：[osx | linux | ...]
 platform = "linux"
 ～
 # [-] 美化输出简读页，选项：[auto| on| off]
