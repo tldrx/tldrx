@@ -106,7 +106,7 @@ private_pages_dir = "/path/to/private/tldr-pages"
 
 # [-] 显示指定平台简读页，选项：[osx | linux | ...]
 platform = "linux"
-～
+
 # [-] 美化输出简读页，选项：[auto| on| off]
 sytled = "auto"
 
