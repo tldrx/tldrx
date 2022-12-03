@@ -80,6 +80,42 @@ P.S. 一些研究表示人体大脑对于 `100ms` 时间窗内的响应，感知
 如你希望榨出更高的性能表现，可将本项目编译成纯静态执行程序以减少运行时因加载动态链接库带来的加载时间。
 
 
+
+## 配置
+
+配置文件 `.tldrxrc` 在不同平台下的位置
+
+- Linux `~/.tldrxrc`
+- MacOS `~/.tldrxrc`
+- Windows `%USERPROFILE%\.tldrxrc`
+
+如果没有需自行创建一个
+
+### 配置模板 `.tldrxrc` 
+
+- `[-]` 选项为可选项
+- `<+>` 选项为必须项，如果需要该特定功能
+
+```toml
+
+# (-) 官方简读页存放目录
+official_pages_dir = "/path/to/official/tldr-pages"
+
+# <+> 私有简读页存放目录
+private_pages_dir = "/path/to/private/tldr-pages"
+
+# (-) 显示指定平台简读页，选项：[osx | linux | ...]
+platform = "linux"
+～
+# [-] 美化输出简读页，选项：[auto| on| off]
+sytled = "auto"
+
+# [-] 配置编辑器用于编辑私有简读页
+editor = "vi"
+
+```
+
+
 ## 许可证
 
 本项目遵循 [MIT](LICENSE-MIT) 和 [MulanPSL-2.0](LICENSE-MulanPSL) 双许可。您可自由选择两款许可中任意一款适合您的来遵循。

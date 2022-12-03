@@ -68,6 +68,42 @@ Recommendation here is chose a client base on the provided features that suits y
 If you want more performance, build `tldrx` as a static binary that would reduce the dynamic library load time.
 
 
+
+## Configuration
+
+The location of the configuration file `.tldrxrc` varies by platform
+
+- Linux `~/.tldrxrc`
+- MacOS `~/.tldrxrc`
+- Windows `%USERPROFILE%\.tldrxrc`
+
+Create one if not there.
+
+### Template `.tldrxrc` 
+
+- `[-]` option Optional.
+- `<+>` option Required only if that feature you want.
+
+```toml
+
+# (-) Path to cache official tldr-pages
+official_pages_dir = "/path/to/official/tldr-pages"
+
+# <+> Path to private tldr-pages
+private_pages_dir = "/path/to/private/tldr-pages"
+
+# (-) Show pages for the given platform. Option: [osx | linux | ...]
+platform = "linux"
+
+# [-] Colorlize the output pages Choice: [auto | on | off]
+sytled = "auto"
+
+# [-] Editor to edit private tldr-pages
+editor = "vi"
+
+```
+
+
 ## License
 
 This project is dual-licensed under [MIT](LICENSE-MIT) license and [MulanPSL-2.0](LICENSE-MulanPSL) license.
