@@ -1,6 +1,6 @@
 [package]
 name = "tldrx"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "MIT OR MulanPSL-2.0"
 readme = "README.md"
@@ -8,7 +8,7 @@ repository = "https://github.com/tldrx/tldrx"
 documentation = "https://github.com/tldrx/tldrx"
 keywords = ["tldr", "tldr-pages"]
 categories = ["command-line-utilities"]
-include =["/src", "/docs", "/Cargo.*", "/README.md", "/LICENSE-*"]
+include =["/src", "/docs", "/Cargo.*", "/README.md", "README.zh.md", "/LICENSE-*", "CHANGELOG.md"]
 description = """
 A tldr pages client support private pages.
 """
